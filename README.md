@@ -37,7 +37,7 @@
 - React-Bootstrap (`to make some work faster, i would use internal framework, if exists, or create from scratch, if i had more time`)
 
 - [Winston](https://www.npmjs.com/package/winston) for logging
-- [Concurrently](https://www.npmjs.com/package/concurrently) and Nodemon (`to development easier`)
+- [Concurrently](https://www.npmjs.com/package/concurrently) and Nodemon (`to make development easier`)
 
 ## Does this app has issues?
 
@@ -53,7 +53,7 @@ Things can be added for near future: More CRUD API, Persistency of Data, Impleme
 
 ## Final Notes to 1800Flowers Team
 
-- If you are okay, i can implement autocomplete, fix empty data minor bug and more unit tests and styling until our meeting next meeting.
+- If you are okay, i can implement autocomplete, fix empty data minor bug and add more unit tests and styling until our meeting next week.
 - Please let me know through email (Sarah)
 
 - I didn't know if i had to deploy this app or just send github link. So, sending github link. You can run locally and check the output. For prod, i might need to proxy prod URL on both side.
