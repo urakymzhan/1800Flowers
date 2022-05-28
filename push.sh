@@ -2,6 +2,6 @@
 
 git add .
 
-git commit -m"fixed README.md typo"
+git commit -m"ports updated"
 
 git push 

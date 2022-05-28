@@ -5,7 +5,7 @@ dotenv.config({ path: path.join(__dirname, "../../.env") });
 
 console.log(process.env.NODE_ENV);
 
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 5055;
 const env =
   process.env.NODE_ENV === "development" ? "development" : "production";
 
