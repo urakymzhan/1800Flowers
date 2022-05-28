@@ -62,7 +62,7 @@ In case .env is missing on github, this is how its content looks like
 
 ```bash
 # Port Number
-PORT=5000
+PORT=5055
 
 # Node env
 NODE_ENV=development
