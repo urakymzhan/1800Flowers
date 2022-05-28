@@ -2,15 +2,21 @@ import styles from "./Header.module.css";
 
 export default function Header() {
   return (
-    <div>
-      <header className={styles.header}>
+    <header className={styles.header}>
+      <div className={styles.topTabs}>
+        <p>Accessiblity Statement</p>
+        <p>Corporate Gifts</p>
+        <p>Store Locator</p>
+        <p>International Delivery</p>
+      </div>
+      <nav className={styles.nav}>
         <h1>
           Posts.<span style={{ color: "#71CB86" }}>com</span>
         </h1>
         <h1>
           Cart <span style={{ color: "#71CB86" }}>(0)</span>
         </h1>
-      </header>
+      </nav>
       <div className={styles.randomLogos}>
         <div>
           <img
@@ -49,6 +55,6 @@ export default function Header() {
           />
         </div>
       </div>
-    </div>
+    </header>
   );
 }

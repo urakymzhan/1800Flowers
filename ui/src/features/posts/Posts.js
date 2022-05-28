@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { selectPosts, getPosts, editPost, savePost } from "./postsSlice";
+import { selectPosts, getPosts, editPost } from "./postsSlice";
 import styles from "./Posts.module.css";
 import Button from "react-bootstrap/Button";
 import Alert from "react-bootstrap/Alert";
-import Modal from "react-bootstrap/Modal";
-import Form from "react-bootstrap/Form";
+import ModalComponent from "../../components/Modal";
+// import useModal from "../../hooks/useModal";
 
 export function Posts() {
   const dispatch = useDispatch();
@@ -15,6 +15,9 @@ export function Posts() {
   const [query, setQuery] = useState("");
   const [emptyMessage, setEmptyMessage] = useState("");
 
+  // Quick fix to handle if returned data is empty
+  const [isFirstLoad, setIsFirstLoad] = useState(false);
+
   // Modal
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
@@ -22,21 +25,24 @@ export function Posts() {
 
   const handleInput = (event) => setQuery(event.target.value);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = () => {
     if (query === "") {
       setEmptyMessage("Type at least 2 characters");
       setTimeout(() => {
         setEmptyMessage("");
       }, 2000);
-      // TODO: dispatch(getPosts(""));
       return;
     } else {
       setEmptyMessage("");
       dispatch(getPosts(query));
+      setIsFirstLoad(true);
+      setTimeout(() => {
+        setIsFirstLoad(false);
+      }, 2000);
     }
   };
 
-  // Keyboard support
+  // Quick way keyboard support
   const handleKeyPress = (e) => {
     if (e.code === "Enter") {
       handleSubmit();
@@ -50,50 +56,62 @@ export function Posts() {
   };
 
   const hanldeModalChange = (e) => {
-    console.log(e.target.name, e.target.value);
     const new_post = { ...editedPost };
     new_post[e.target.name] = e.target.value;
     dispatch(editPost(new_post));
   };
 
-  let result;
-  // TODO
-  // if (data.length === 0 && query.length > 0) {
-  //   result = <h3>No results found! Try with different keywords!</h3>;
-  // }
-  if (emptyMessage.length > 1) {
-    result = (
-      <Alert key="danger" variant="danger">
-        {emptyMessage}
-      </Alert>
-    );
-  }
-  if (status === "loading") {
-    result = <h3>{status}</h3>;
-  }
-  if (status === "rejected") {
-    result = (
-      <Alert key="danger" variant="danger">
-        {error}
-      </Alert>
-    );
-  }
-  if (status === "idle" && data.length > 0) {
-    result = data.map((post) => (
-      <p key={post.id}>
-        <Button
-          variant="link"
-          onClick={() => {
-            handleShow();
-            handleEdit(post.id);
-          }}
-        >
-          {" "}
-          {post.title}
-        </Button>
-      </p>
-    ));
-  }
+  // Quick way to organize some logic together
+  const showResult = () => {
+    if (data.length === 0 && isFirstLoad) {
+      return (
+        <h3>
+          No results found for <strong> {query}</strong>! Try with different
+          keyword!
+        </h3>
+      );
+    }
+    // If no input typed
+    if (emptyMessage.length > 1) {
+      return (
+        <Alert key="danger" variant="danger">
+          {emptyMessage}
+        </Alert>
+      );
+    }
+    // If result loading
+    if (status === "loading") {
+      return <h3>{status}</h3>;
+    }
+    // If api rejected data
+    if (status === "rejected") {
+      return (
+        <Alert key="danger" variant="danger">
+          {error}
+        </Alert>
+      );
+    }
+    // Success
+    if (status === "idle" && data.length > 0 && emptyMessage.length === 0) {
+      return data.map((post) => (
+        <p key={post.id}>
+          <Button
+            variant="link"
+            onClick={() => {
+              handleShow();
+              handleEdit(post.id);
+            }}
+          >
+            {" "}
+            {post.title}
+          </Button>
+        </p>
+      ));
+    }
+  };
+
+  // Not ideal but works
+  let result = showResult();
 
   return (
     <div className={styles.posts}>
@@ -110,65 +128,16 @@ export function Posts() {
         </button>
       </div>
       <div className={styles.row}>
-        <h2>Search Result: {data.length}</h2>
+        <h4>
+          Search Result: <span style={{ color: "gray" }}>{data.length}</span>
+        </h4>
         <div className={styles.results}>{result}</div>
       </div>
-
-      <Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Edit Post</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form>
-            {/* id - user shouldn't change it */}
-            <Form.Group className="mb-3">
-              <Form.Label>Post Id</Form.Label>
-              <Form.Control type="text" value={editedPost.id} disabled />
-            </Form.Group>
-
-            {/* title */}
-            <Form.Group className="mb-3">
-              <Form.Label>Post Title</Form.Label>
-              <Form.Control
-                type="text"
-                autoFocus={true}
-                value={editedPost.title}
-                name="title"
-                onChange={hanldeModalChange}
-              />
-            </Form.Group>
-            {/* body */}
-            <Form.Group
-              className="mb-3"
-              controlId="exampleForm.ControlTextarea1"
-            >
-              <Form.Label>Post Body</Form.Label>
-              <Form.Control
-                as="textarea"
-                rows={6}
-                value={editedPost.body}
-                name="body"
-                onChange={hanldeModalChange}
-              />
-            </Form.Group>
-          </Form>
-        </Modal.Body>
-        {/* footer menu */}
-        <Modal.Footer>
-          <Button variant="dark" onClick={handleClose}>
-            Cancel
-          </Button>
-          <Button
-            variant="success"
-            onClick={() => {
-              handleClose();
-              dispatch(savePost());
-            }}
-          >
-            Save Changes
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      <ModalComponent
+        hanldeModalChange={hanldeModalChange}
+        handleClose={handleClose}
+        show={show}
+      />
     </div>
   );
 }

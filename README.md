@@ -67,3 +67,9 @@ PORT=5000
 # Node env
 NODE_ENV=development
 ```
+
+## Screenshots
+
+![api](./images/api.png)
+![result](./images/result.png)
+![edit](./images/edit.png)
